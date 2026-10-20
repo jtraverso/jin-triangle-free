@@ -1,0 +1,149 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Jin's theorem on dense triangle-free graphs"
+  description: >-
+    A Lean 4 / Mathlib formalization of Jin's theorem: a finite triangle-free graph on n vertices
+    with minimum degree greater than 10n/29 is 3-colourable; and of its sharpness: for every m ≥ 1
+    the blow-up of the Grötzsch graph with weights 3m, 2m, 4m is a triangle-free 10m-regular graph
+    on 29m vertices that is not 3-colourable (Häggkvist). This extends the case r = 2 of the
+    Andrásfai–Erdős–Sós theorem, which is in Mathlib. Mathlib does not have Jin's theorem.
+  authors:
+    - "Juan Pablo Traverso Gianini"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "Juan Pablo Traverso Gianini"
+
+classification:
+  arxiv: ["math.CO"]
+  msc2020: ["05C15", "05C35"]
+
+sources:
+  - title: "Triangle-free four-chromatic graphs"
+    authors:
+      - "G. P. Jin"
+    id: "doi:10.1016/0012-365X(94)00063-O"
+    type: "paper"
+    location: "Discrete Mathematics 145 (1995), 151–170"
+    relationship: "formalizes"
+    note: "Triangle-free graphs with δ > 10n/29 are 3-colourable."
+    license: "all rights reserved"
+    author_endorsement: "n/a"
+  - title: "Odd cycles of specified length in non-bipartite graphs"
+    authors:
+      - "R. Häggkvist"
+    id: "doi:10.1016/S0304-0208(08)73552-7"
+    type: "paper"
+    location: "Graph Theory (Cambridge, 1981), North-Holland Mathematics Studies 62 (1982), 89–99"
+    relationship: "formalizes"
+    note: "The blow-up of the Grötzsch graph showing that 10/29 is sharp."
+    license: "all rights reserved"
+    author_endorsement: "n/a"
+  - title: "Triangle-free graphs with large degree"
+    authors:
+      - "C. C. Chen"
+      - "G. P. Jin"
+      - "K. M. Koh"
+    id: "doi:10.1017/S0963548397003167"
+    type: "paper"
+    location: "Combinatorics, Probability and Computing 6 (1997), 381–396"
+    relationship: "background"
+    note: "Structure of triangle-free graphs with δ > n/3."
+    license: "all rights reserved"
+    author_endorsement: "n/a"
+  - title: "On the connection between chromatic number, maximal clique and minimal degree of a graph"
+    authors:
+      - "B. Andrásfai"
+      - "P. Erdős"
+      - "V. T. Sós"
+    id: "doi:10.1016/0012-365X(74)90133-2"
+    type: "paper"
+    location: "Discrete Mathematics 8 (1974), 205–218"
+    relationship: "background"
+    note: "The theorem extended here (in Mathlib)."
+    license: "all rights reserved"
+    author_endorsement: "n/a"
+
+status:
+  scope: >-
+    Jin's theorem is proved for every finite triangle-free simple graph with 10 n < 29 δ(G); the
+    sharpness statement for every m ≥ 1. The structure theorem of Chen–Jin–Koh (homomorphisms to
+    Andrásfai graphs) and the Brandt–Thomassé results for δ > n/3 are not formalized.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: []
+
+automation:
+  methods:
+    - method: "autonomous"
+      models: ["Aristotle (Harmonic)"]
+      framework: "Aristotle CLI"
+      tool_setup: >-
+        Two runs from the formal statements and proof plans. The first proved the sharpness, the
+        weight lemma for homomorphisms from the Grötzsch graph and the reduction to maximal
+        triangle-free graphs, and identified the remaining structural case; the second proved the
+        key lemma (every vertex meets every closed walk of length 5) by an extremal argument over
+        eight patterns and completed the proof. Finite checks use `decide` and `decide +kernel`
+        (no `native_decide`). Each return was audited (statements and headers unchanged, no added
+        axioms) and rebuilt locally.
+      cost:
+        wall_time: "about three hours in total"
+        spend_usd: "not tracked"
+        hardware: "API-only"
+      prompting_notes: "Formal statements and proof plans supplied."
+    - method: "agent"
+      models: ["Claude Opus 5.5"]
+      framework: "Claude Code (Anthropic)"
+      tool_setup: >-
+        Statement design (the extremal 29-vertex example and the maximum weight 10 of an
+        independent set of the weighted Grötzsch graph were checked numerically), proof plans,
+        integration and review of the Aristotle returns, and the Palomar packaging, checked with
+        `lake build`, `#print axioms` and a comparison of the elaborated Challenge and Solution
+        declarations (Lean v4.35.0-rc3, Mathlib c55e6e786f49471c72fbddbec5415808896aec1e).
+      cost:
+        wall_time: "about one hour"
+        spend_usd: "subscription-based"
+        hardware: "local machine"
+      prompting_notes: "Natural-language instructions in Spanish, directed by the author."
+  spend_usd: "subscription-based"
+  notes: >-
+    The result was chosen by the human author; the Lean proofs are AI-generated and mechanically
+    verified (no `sorry`, axioms limited to propext, Classical.choice and Quot.sound, identical
+    elaborated types for the Challenge/Solution pair).
+
+fidelity:
+  divergences: >-
+    Triangle-free is `G.CliqueFree 3`; the degree condition δ > 10n/29 is stated in integers as
+    10 · card V < 29 · minDegree; 3-colourable is `G.Colorable 3`. The sharpness statement gives,
+    for each m ≥ 1, a graph on Fin (29 m) with a decidable adjacency relation, every degree equal to
+    10 m, triangle-free and not 3-colourable.
+
+review:
+  status: "agent-reviewed"
+  reviewers:
+    - "Claude Opus 5.5 (AI agent in Claude Code, acting for the author)"
+  notes: >-
+    Agent review by Claude Opus 5.5, distinct from the mechanical verification: the agent compared
+    the statements with Jin's theorem and Häggkvist's example, checked the example and the weight
+    bound numerically, checked that each Aristotle return left the statements and headers
+    unchanged, and confirmed by `lake build`, `#print axioms` and a comparison of the fully
+    elaborated Challenge and Solution types that the proofs use no `sorry` and only propext,
+    Classical.choice and Quot.sound. The author directed the work and approved the statements. No
+    independent human mathematical review has been performed. The results are classical; no
+    mathematical novelty is claimed.
+
+alignment:
+  namespace: "JinTheorem"
+  statements:
+    - source: "Jin (1995): triangle-free graphs with δ > 10n/29 are 3-colourable"
+      lean: "JinTheorem.jin"
+      module: "Challenge"
+      status: "proved"
+    - source: "Häggkvist (1982): the constant 10/29 is sharp"
+      lean: "JinTheorem.jin_sharp"
+      module: "Challenge"
+      status: "proved"
+
+acknowledgements: >-
+  Mathlib and the Lean community; Harmonic's Aristotle.
